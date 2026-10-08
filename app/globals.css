@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --framboise: #FF0A54;
+  --orange: #FF4600;
+  --ciel: #00BFFF;
+  --jaune: #FAEE05;
+  --creme: #FFF8F5;
+  --prune: #4A2C3F;
+}
+
+html, body { background: var(--creme); color: var(--prune); }
+body {
+  font-family: Quicksand, Nunito, system-ui, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  /* de petites taches de couleur très douces en fond */
+  background-image:
+    radial-gradient(circle at 100% 0%, rgba(0,191,255,0.10), transparent 40%),
+    radial-gradient(circle at 0% 15%, rgba(255,10,84,0.08), transparent 35%);
+  background-attachment: fixed;
+}
+h1, h2, h3 { font-family: Fraunces, Georgia, serif; }
+
+@layer components {
+  .card {
+    @apply rounded-carte bg-white p-5 shadow-doux border border-prune/5 animate-apparition;
+  }
+  .titre-grad {
+    @apply font-titre font-bold bg-clip-text text-transparent;
+    background-image: linear-gradient(90deg, #FF0A54, #FF4600 60%, #00BFFF);
+  }
+  .btn {
+    @apply inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 text-base font-bold transition active:scale-95 disabled:opacity-50 disabled:active:scale-100;
+  }
+  .btn-grad {
+    @apply btn text-white shadow-doux;
+    background-image: linear-gradient(110deg, #FF0A54, #FF4600);
+    /* léger ombrage du texte pour garder une bonne lisibilité sur les couleurs vives */
+    text-shadow: 0 1px 2px rgba(74,44,63,0.35);
+  }
+  .btn-ciel { @apply btn text-prune; background-color: var(--ciel); }
+  .btn-soft { @apply btn bg-prune/5 text-prune hover:bg-prune/10; }
+  .input {
+    @apply min-h-[48px] w-full rounded-2xl border-2 border-prune/10 bg-white px-4 text-base text-prune outline-none transition focus:border-framboise;
+  }
+  .label { @apply mb-1 block text-sm font-bold text-prune/80; }
+  .chip {
+    @apply inline-flex min-h-[44px] items-center gap-1 rounded-full border-2 border-prune/10 bg-white px-4 text-sm font-bold text-prune transition;
+  }
+  .chip[aria-pressed="true"] { @apply border-transparent text-white; background-image: linear-gradient(110deg, #FF0A54, #FF4600); text-shadow: 0 1px 2px rgba(74,44,63,0.35); }
+}
+
+@keyframes apparition { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.animate-apparition { animation: apparition .5s ease-out both; }
+@keyframes pulse-doux { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
+.pulse-doux { animation: pulse-doux 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
