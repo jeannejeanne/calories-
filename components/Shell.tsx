@@ -1,14 +1,20 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { useStore } from "@/lib/store";
-import { Sparkle, useHydrated } from "./ui";
+import { useHydrated } from "./ui";
 import Onboarding from "./Onboarding";
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
+const icon = (d: React.ReactNode) => (
+  <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>{d}</svg>
+);
 const TABS = [
-  { href: "/", label: "Aujourd'hui", icon: "🌷" },
-  { href: "/semaine", label: "Semaine", icon: "📊" },
-  { href: "/suivi", label: "Mon suivi", icon: "⚖️" },
+  { href: "/", label: "Aujourd'hui", svg: icon(<><path d="M3 11.5 12 4l9 7.5" /><path d="M5.5 10v9.5h13V10" /><path d="M10 19.5v-5h4v5" /></>) },
+  { href: "/semaine/", label: "Semaine", svg: icon(<><path d="M5 20V11M12 20V4M19 20v-6" /></>) },
+  { href: "/suivi/", label: "Mon suivi", svg: icon(<><path d="M12 20.5s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.8a4.3 4.3 0 0 1 7.5 2.7c0 5.4-7.5 10-7.5 10z" /></>) },
 ];
 
 export default function Shell({ children }: { children: React.ReactNode }) {
@@ -16,35 +22,37 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const profile = useStore((s) => s.profile);
   const path = usePathname();
 
+  // Service worker : permet l'installation sur l'écran d'accueil
+  useEffect(() => {
+    if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register(`${base}/sw.js`).catch(() => {});
+  }, []);
+
   if (!hydrated)
-    return <div className="grid min-h-dvh place-items-center font-logo text-3xl text-framboise">Mes calories</div>;
+    return <div className="grid min-h-dvh place-items-center font-logo text-4xl text-framboise">Mes calories</div>;
   if (!profile) return <Onboarding />;
 
+  const norm = (p: string) => (p.length > 1 ? p.replace(/\/$/, "") : p);
   const tab = (t: (typeof TABS)[number]) => {
-    const on = path === t.href;
+    const on = norm(path) === norm(t.href);
     return (
       <Link key={t.href} href={t.href} aria-current={on ? "page" : undefined}
-        className={`flex min-h-[56px] flex-1 flex-col items-center justify-center text-xs font-bold ${on ? "text-framboise" : "text-prune/70"}`}>
-        <span aria-hidden className="text-xl">{t.icon}</span>{t.label}
+        className={`flex min-h-[60px] flex-1 flex-col items-center justify-center gap-0.5 text-[11px] font-bold ${on ? "text-framboise" : "text-prune/70"}`}>
+        <span className={`grid h-8 w-12 place-items-center rounded-full transition ${on ? "bg-framboise/10" : ""}`}>{t.svg}</span>
+        {t.label}
       </Link>
     );
   };
 
   return (
-    <div className="mx-auto min-h-dvh w-full max-w-md px-4 pb-32 pt-3 md:max-w-lg">
-      <div className="flex items-center justify-between">
-        <span className="font-logo text-2xl text-framboise">Mes calories <Sparkle className="text-base" /></span>
-        <Link href="/reglages" aria-label="Réglages" className="grid h-11 w-11 place-items-center rounded-full bg-white text-xl shadow-doux">⚙️</Link>
-      </div>
+    <div className="mx-auto min-h-dvh w-full max-w-md px-4 pb-40 pt-3 md:my-6 md:min-h-[calc(100dvh-3rem)] md:max-w-lg md:overflow-hidden md:rounded-[40px] md:bg-creme md:shadow-[0_30px_80px_-20px_rgba(255,10,84,.45)]">
       <main>{children}</main>
-
       <nav aria-label="Navigation principale"
-        className="fixed inset-x-0 bottom-0 z-20 mx-auto flex max-w-md items-end rounded-t-[32px] border-t border-prune/5 bg-white/95 px-2 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_30px_-10px_rgba(255,10,84,0.25)] backdrop-blur md:max-w-lg">
+        className="fixed bottom-4 left-1/2 z-20 flex w-[calc(100%-2rem)] max-w-[26rem] -translate-x-1/2 items-center rounded-full border border-white bg-white/90 px-2 shadow-[0_18px_40px_-12px_rgba(255,10,84,.45)] backdrop-blur-xl pb-[env(safe-area-inset-bottom)]">
         {tab(TABS[0])}
-        <Link href="/ajouter" aria-label="Ajouter un repas"
-          className={`-mt-7 mb-2 grid h-16 w-16 shrink-0 place-items-center rounded-full text-3xl font-bold text-white shadow-doux ring-4 ring-creme transition active:scale-95`}
-          style={{ backgroundImage: "linear-gradient(135deg,#FF0A54,#FF4600 60%,#00BFFF)", textShadow: "0 1px 2px rgba(74,44,63,.4)" }}>
-          +
+        <Link href="/ajouter/" aria-label="Ajouter un repas"
+          className="-mt-9 mb-1 grid h-[68px] w-[68px] shrink-0 place-items-center rounded-full text-white ring-[6px] ring-creme transition active:scale-95"
+          style={{ backgroundImage: "linear-gradient(135deg,#FF0A54,#FF4600 60%,#00BFFF)", boxShadow: "0 16px 30px -8px rgba(255,10,84,.7), inset 0 2px 0 rgba(255,255,255,.35)" }}>
+          <svg viewBox="0 0 24 24" className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" aria-hidden><path d="M12 5v14M5 12h14" /></svg>
         </Link>
         {tab(TABS[1])}
         {tab(TABS[2])}

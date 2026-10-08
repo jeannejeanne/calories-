@@ -73,7 +73,7 @@ export default function ProfileForm({ initial, submitLabel, onSubmit }: {
       </fieldset>
 
       {preview && duree && (
-        <div className="rounded-carte bg-creme p-4 text-sm leading-relaxed">
+        <div className="rounded-carte bg-creme p-4 text-sm leading-relaxed ring-1 ring-framboise/15">
           <p className="font-titre text-lg font-bold text-framboise">Ton budget : {preview.base} kcal / jour</p>
           <p>
             Ton corps dépense environ {preview.depenseTotale} kcal par jour (métabolisme de base × 1,375 pour une vie plutôt sédentaire).

@@ -1,6 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { DEFAULT_MODEL } from "./ai";
 import { MIN_BUDGET, computeBudget, todayIso } from "./calc";
 import type { FoodItem, Meal, MealType, Profile, WeightEntry } from "./types";
 
@@ -10,6 +11,10 @@ interface State {
   water: Record<string, number>; // verres par jour
   weights: WeightEntry[];
   closedDays: string[];
+  apiKey: string; // clé Anthropic, gardée uniquement sur cet appareil
+  model: string;
+  setApiKey: (k: string) => void;
+  setModel: (m: string) => void;
   setProfile: (p: Profile) => void;
   addMeal: (type: MealType, items: FoodItem[], photo?: string, date?: string) => void;
   removeMeal: (id: string) => void;
@@ -30,6 +35,10 @@ export const useStore = create<State>()(
       water: {},
       weights: [],
       closedDays: [],
+      apiKey: "",
+      model: DEFAULT_MODEL,
+      setApiKey: (apiKey) => set({ apiKey: apiKey.trim() }),
+      setModel: (model) => set({ model }),
       setProfile: (profile) =>
         set((s) => {
           // le poids actuel du profil sert de première pesée
@@ -49,7 +58,7 @@ export const useStore = create<State>()(
           ),
         })),
       closeDay: (date) => set((s) => ({ closedDays: [...new Set([...s.closedDays, date])] })),
-      reset: () => set({ profile: null, meals: [], water: {}, weights: [], closedDays: [] }),
+      reset: () => set({ profile: null, meals: [], water: {}, weights: [], closedDays: [], apiKey: "", model: DEFAULT_MODEL }),
     }),
     { name: "mes-calories-v1", version: 1 }
   )

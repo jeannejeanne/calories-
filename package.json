@@ -5,12 +5,11 @@
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
-    "start": "next start -H 0.0.0.0",
+    "start": "npx serve out",
     "test": "tsx --test lib/*.test.ts",
     "icons": "node scripts/make-icons.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.132.1",
     "next": "^15.5.27",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
